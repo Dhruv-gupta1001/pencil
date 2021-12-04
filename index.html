@@ -1,0 +1,192 @@
+<!-- PepBoard -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body{
+            margin: 0px;
+        }
+        .fa-square{
+            margin-right: 2rem;
+            margin-left: 2rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+   
+    <style>
+        .fas{
+            font-size: 2rem;
+        }
+        .icon-pallet{
+            margin-left: 100px;
+            width: 800px;
+            height: 50px;
+            display: flex;
+            /* border: 3px;
+            border-color: purple; */
+            /* border: 3px solid purple; */
+            align-items: center;
+            justify-content: space-evenly;
+            background-color: lightgrey;
+        }
+        .red{
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: lightpink;
+        }
+        .green{
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: lightgreen;
+        }
+        .blue{
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: lightblue;
+        }
+        div{
+            border-color: chartreuse;
+        }
+        .color-area{
+            border: 1px solid gray;
+            height: 100px;
+            width: 100px;
+            margin-top: 30px;
+            margin-left: 30px;
+        }
+    </style>
+    
+    <div class="icon-pallet">
+        <i class="fas fa-square"></i>
+        <i class="fas fa-grip-lines-vertical"></i>
+        <i class="fas fa-pen"></i>
+        <div class ="red"></div>
+        <div class ="green"></div>
+        <div class ="blue"></div>
+    </div>
+
+     <!-- <h1>Canvas Example</h1> -->
+    <!-- drawing board area -->
+    <canvas></canvas>
+</body>
+<!-- html js inject -->
+<script>
+    let colorArea=document.querySelector(".color-area");
+        let redS=document.querySelector(".red");
+        let greenS=document.querySelector(".green");
+        let blueS=document.querySelector(".blue");
+
+        let gcolor="black";        
+        redS.addEventListener("click",function(e){
+            tool.strokeStyle="lightpink";
+        })
+        greenS.addEventListener("click",function(e){
+            tool.strokeStyle="lightgreen";
+        })
+        blueS.addEventListener("click",function(e){
+            tool.strokeStyle="lightblue";
+        })
+</script>
+
+<script>
+    let canvasBoard= document.querySelector("canvas");
+    let body = document.querySelector("body");
+    let square= document.querySelector(".fa-square");
+    let line= document.querySelector(".fa-grip-lines-vertical");
+    let pencil=document.querySelector(".fa-pen");
+
+    // canvas default size is small
+    canvasBoard.height = window.innerHeight; // pure window ki heigth
+    canvasBoard.width  = window.innerWidth;  // canvasBoard.width= 200
+
+    // this tool will give tool for our canvasBoard to draw in 2d
+    let tool= canvasBoard.getContext("2d"); //tool for canvasBoard
+
+    //rectangle build (area)
+    // tool.fillStyle="green"; 
+    // // tool.fillRect(0,0,200,200); //default
+    
+    // //rectangle perimeter 
+    // tool.strokeStyle="red";
+    // // tool.strokeRect(50,50,200,200); //(x starting,y starting,height,width)
+
+    // tool.fillStyle="blue";
+    // tool.fillRect(0,0,50,50);
+
+    //currentTool
+    let cTool="square";
+
+    square.addEventListener("click",function(e){
+        cTool="square";
+    })
+
+    line.addEventListener("click",function(e){
+        cTool="line";
+    })
+
+    let drawingMode=false;
+    let attempt=0;
+    pencil.addEventListener("click",function(e){
+        cTool="pencil";
+        drawingMode=true;
+        attempt=1;
+    })
+    console.log(canvasBoard.getBoundingClientRect());
+    let canvasTop=canvasBoard.getBoundingClientRect().top;
+    let canvasLeft=canvasBoard.getBoundingClientRect().left;
+
+    let iX,iY,fX,fY;
+
+    //mouse jab click karega
+    body.addEventListener("mousedown",function(pos){
+
+        // console.log(pos);
+        iX= pos.clientX+canvasLeft;
+        iY= pos.clientY-canvasTop;
+        // console.log(iX ,iY);
+        if(cTool=="pencil"){
+            attempt=0;
+            drawingMode=true;
+            tool.beginPath();
+            tool.moveTo(iX,iY);
+        }
+    })
+    body.addEventListener("mousemove",function(e){
+        if(drawingMode && attempt==0){
+            fX=e.clientX+canvasLeft;
+            fY= e.clientY-canvasTop;
+            tool.lineTo(fX,fY);
+            tool.stroke();
+            iX=fX;
+            iY=fY;
+        }
+    })
+    // mouse ka click jab chutega
+    body.addEventListener("mouseup",function(pos){
+        // console.log(pos);
+        drawingMode=false;
+        if(cTool!="pencil"){
+            fX= pos.clientX+canvasLeft;
+            fY= pos.clientY-canvasTop;
+            let width= fX-iX;
+            let height= fY-iY;
+            if(cTool=="square"){
+            tool.strokeRect(iX,iY,width,height);
+        }else if(cTool=="line"){
+            tool.beginPath();
+            tool.moveTo(iX,iY);
+            tool.lineTo(fX,fY);
+            tool.stroke();
+        }
+        }
+    })
+
+
+</script>
+</html>
